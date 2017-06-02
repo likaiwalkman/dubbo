@@ -15,18 +15,7 @@
  */
 package com.alibaba.dubbo.rpc.protocol.dubbo.telnet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import org.easymock.EasyMock;
-import org.easymock.IAnswer;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.alibaba.dubbo.common.URL;
-import com.alibaba.dubbo.common.logger.Logger;
-import com.alibaba.dubbo.common.logger.LoggerFactory;
 import com.alibaba.dubbo.remoting.RemotingException;
 import com.alibaba.dubbo.remoting.exchange.ExchangeClient;
 import com.alibaba.dubbo.remoting.exchange.Exchangers;
@@ -35,10 +24,17 @@ import com.alibaba.dubbo.rpc.Invoker;
 import com.alibaba.dubbo.rpc.protocol.dubbo.DubboProtocol;
 import com.alibaba.dubbo.rpc.protocol.dubbo.support.DemoService;
 import com.alibaba.dubbo.rpc.protocol.dubbo.support.ProtocolUtils;
+import org.easymock.EasyMock;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * PortTelnetHandlerTest.java
- * 
+ *
  * @author tony.chenl
  */
 public class PortTelnetHandlerTest {
@@ -67,7 +63,7 @@ public class PortTelnetHandlerTest {
         ExchangeClient client1 = Exchangers.connect("dubbo://127.0.0.1:20887/demo");
         ExchangeClient client2 = Exchangers.connect("dubbo://127.0.0.1:20887/demo");
         Thread.sleep(5000);
-        String result = port.telnet(null, "-l 20887");
+        String result      = port.telnet(null, "-l 20887");
         String client1Addr = client1.getLocalAddress().toString();
         String client2Addr = client2.getLocalAddress().toString();
         System.out.printf("Result: %s %n", result);

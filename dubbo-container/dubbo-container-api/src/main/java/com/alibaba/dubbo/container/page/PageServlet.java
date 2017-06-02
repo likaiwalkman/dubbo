@@ -15,22 +15,6 @@
  */
 package com.alibaba.dubbo.container.page;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.alibaba.dubbo.common.Constants;
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
@@ -38,25 +22,29 @@ import com.alibaba.dubbo.common.logger.Logger;
 import com.alibaba.dubbo.common.logger.LoggerFactory;
 import com.alibaba.dubbo.common.utils.StringUtils;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * PageServlet
- * 
+ *
  * @author william.liangf
  */
 public class PageServlet extends HttpServlet {
 
-    private static final long     serialVersionUID = -8370312705453328501L;
-
-    protected static final Logger logger           = LoggerFactory.getLogger(PageServlet.class);
-
-    protected final Random        random           = new Random();
-    
-    protected final Map<String, PageHandler>  pages = new ConcurrentHashMap<String, PageHandler>();
-
-    protected final List<PageHandler>    menus = new ArrayList<PageHandler>();
-    
+    protected static final Logger logger = LoggerFactory.getLogger(PageServlet.class);
+    private static final long serialVersionUID = -8370312705453328501L;
     private static PageServlet INSTANCE;
-    
+    protected final Random random = new Random();
+    protected final Map<String, PageHandler> pages = new ConcurrentHashMap<String, PageHandler>();
+    protected final List<PageHandler> menus = new ArrayList<PageHandler>();
+
     public static PageServlet getInstance() {
         return INSTANCE;
     }
@@ -69,7 +57,7 @@ public class PageServlet extends HttpServlet {
     public void init() throws ServletException {
         super.init();
         INSTANCE = this;
-        String config = getServletConfig().getInitParameter("pages");
+        String             config = getServletConfig().getInitParameter("pages");
         Collection<String> names;
         if (config != null && config.length() > 0) {
             names = Arrays.asList(Constants.COMMA_SPLIT_PATTERN.split(config));
@@ -86,7 +74,7 @@ public class PageServlet extends HttpServlet {
         }
         Collections.sort(menus, new MenuComparator());
     }
-    
+
     @Override
     protected final void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -96,10 +84,10 @@ public class PageServlet extends HttpServlet {
     @Override
     protected final void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (! response.isCommitted()) {
+        if (!response.isCommitted()) {
             PrintWriter writer = response.getWriter();
-            String uri = request.getRequestURI();
-            boolean isHtml = false;
+            String      uri    = request.getRequestURI();
+            boolean     isHtml = false;
             if (uri == null || uri.length() == 0 || "/".equals(uri)) {
                 uri = "index";
                 isHtml = true;
@@ -117,7 +105,7 @@ public class PageServlet extends HttpServlet {
                 return;
             }
             ExtensionLoader<PageHandler> pageHandlerLoader = ExtensionLoader.getExtensionLoader(PageHandler.class);
-            PageHandler pageHandler = pageHandlerLoader.hasExtension(uri) ? pageHandlerLoader.getExtension(uri) : null;
+            PageHandler                  pageHandler       = pageHandlerLoader.hasExtension(uri) ? pageHandlerLoader.getExtension(uri) : null;
             if (isHtml) {
                 writer.println("<html><head><title>Dubbo</title>");
                 writer.println("<style type=\"text/css\">html, body {margin: 10;padding: 0;background-color: #6D838C;font-family: Arial, Verdana;font-size: 12px;color: #FFFFFF;text-align: center;vertical-align: middle;word-break: break-all; } table {width: 90%; margin: 0px auto;border-collapse: collapse;border: 8px solid #FFFFFF; } thead tr {background-color: #253c46; } tbody tr {background-color: #8da5af; } th {padding-top: 4px;padding-bottom: 4px;font-size: 14px;height: 20px; } td {margin: 3px;padding: 3px;border: 2px solid #FFFFFF;font-size: 14px;height: 25px; } a {color: #FFFFFF;cursor: pointer;text-decoration: underline; } a:hover {text-decoration: none; }</style>");
@@ -127,7 +115,7 @@ public class PageServlet extends HttpServlet {
                 Page page = null;
                 try {
                     String query = request.getQueryString();
-                    page = pageHandler.handle(URL.valueOf(request.getRequestURL().toString() 
+                    page = pageHandler.handle(URL.valueOf(request.getRequestURL().toString()
                             + (query == null || query.length() == 0 ? "" : "?" + query)));
                 } catch (Throwable t) {
                     logger.warn(t.getMessage(), t);
@@ -162,7 +150,7 @@ public class PageServlet extends HttpServlet {
                             nav = ExtensionLoader.getExtensionLoader(PageHandler.class).getExtensionName(pageHandler);
                             nav = nav.substring(0, 1).toUpperCase() + nav.substring(1);
                         }
-                        if (! "index".equals(uri)) {
+                        if (!"index".equals(uri)) {
                             nav = "<a href=\"/\">Home</a> &gt; " + nav;
                         }
                         writeMenu(request, writer, nav);
@@ -207,8 +195,8 @@ public class PageServlet extends HttpServlet {
         writer.println("<thead>");
         writer.println("    <tr>");
         for (PageHandler handler : menus) {
-            String uri = ExtensionLoader.getExtensionLoader(PageHandler.class).getExtensionName(handler);
-            Menu menu = handler.getClass().getAnnotation(Menu.class);
+            String uri  = ExtensionLoader.getExtensionLoader(PageHandler.class).getExtensionName(handler);
+            Menu   menu = handler.getClass().getAnnotation(Menu.class);
             writer.println("        <th><a href=\"" + uri + ".html\">" + menu.name() + "</a></th>");
         }
         writer.println("    </tr>");

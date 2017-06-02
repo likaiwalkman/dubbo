@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 /**
  * @author <a href="mailto:gang.lvg@alibaba-inc.com">kimi</a>
@@ -70,8 +69,8 @@ public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer {
         }
 
         ByteBuffer dst = buffer.isDirect()
-            ? ByteBuffer.allocateDirect(length)
-            : ByteBuffer.allocate(length);
+                ? ByteBuffer.allocateDirect(length)
+                : ByteBuffer.allocate(length);
         dst.put(src);
         dst.clear();
         return new ByteBufferBackedChannelBuffer(dst);
@@ -95,8 +94,8 @@ public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer {
 
     @Override
     public void getBytes(int index, ByteBuffer dst) {
-        ByteBuffer data = buffer.duplicate();
-        int bytesToCopy = Math.min(capacity() - index, dst.remaining());
+        ByteBuffer data        = buffer.duplicate();
+        int        bytesToCopy = Math.min(capacity() - index, dst.remaining());
         try {
             data.limit(index + bytesToCopy).position(index);
         } catch (IllegalArgumentException e) {
@@ -109,7 +108,7 @@ public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer {
     public void getBytes(int index, ChannelBuffer dst, int dstIndex, int length) {
         if (dst instanceof ByteBufferBackedChannelBuffer) {
             ByteBufferBackedChannelBuffer bbdst = (ByteBufferBackedChannelBuffer) dst;
-            ByteBuffer data = bbdst.buffer.duplicate();
+            ByteBuffer                    data  = bbdst.buffer.duplicate();
 
             data.limit(dstIndex + length).position(dstIndex);
             getBytes(index, data);
@@ -128,9 +127,9 @@ public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer {
 
         if (buffer.hasArray()) {
             out.write(
-                buffer.array(),
-                index + buffer.arrayOffset(),
-                length);
+                    buffer.array(),
+                    index + buffer.arrayOffset(),
+                    length);
         } else {
             byte[] tmp = new byte[length];
             ((ByteBuffer) buffer.duplicate().position(index)).get(tmp);
@@ -166,7 +165,7 @@ public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer {
     public void setBytes(int index, ChannelBuffer src, int srcIndex, int length) {
         if (src instanceof ByteBufferBackedChannelBuffer) {
             ByteBufferBackedChannelBuffer bbsrc = (ByteBufferBackedChannelBuffer) src;
-            ByteBuffer data = bbsrc.buffer.duplicate();
+            ByteBuffer                    data  = bbsrc.buffer.duplicate();
 
             data.limit(srcIndex + length).position(srcIndex);
             setBytes(index, data);
@@ -183,7 +182,7 @@ public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer {
             return buffer.duplicate();
         } else {
             return ((ByteBuffer) buffer.duplicate().position(
-                index).limit(index + length)).slice();
+                    index).limit(index + length)).slice();
         }
     }
 
@@ -208,7 +207,7 @@ public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer {
             } while (length > 0);
         } else {
             byte[] tmp = new byte[length];
-            int i = 0;
+            int    i   = 0;
             do {
                 int localReadBytes = in.read(tmp, i, tmp.length - i);
                 if (localReadBytes < 0) {

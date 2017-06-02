@@ -25,7 +25,8 @@ public final class ChannelBuffers {
 
     public static final ChannelBuffer EMPTY_BUFFER = new HeapChannelBuffer(0);
 
-    private ChannelBuffers() {}
+    private ChannelBuffers() {
+    }
 
     public static ChannelBuffer dynamicBuffer() {
         return dynamicBuffer(256);
@@ -86,7 +87,7 @@ public final class ChannelBuffers {
         }
 
         ChannelBuffer buffer = new ByteBufferBackedChannelBuffer(
-            ByteBuffer.allocateDirect(capacity));
+                ByteBuffer.allocateDirect(capacity));
         buffer.clear();
         return buffer;
     }
@@ -114,8 +115,8 @@ public final class ChannelBuffers {
     }
 
     public static int compare(ChannelBuffer bufferA, ChannelBuffer bufferB) {
-        final int aLen = bufferA.readableBytes();
-        final int bLen = bufferB.readableBytes();
+        final int aLen      = bufferA.readableBytes();
+        final int bLen      = bufferB.readableBytes();
         final int minLength = Math.min(aLen, bLen);
 
         int aIndex = bufferA.readerIndex();

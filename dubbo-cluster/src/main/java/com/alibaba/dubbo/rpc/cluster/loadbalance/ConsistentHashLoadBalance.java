@@ -15,6 +15,11 @@
  */
 package com.alibaba.dubbo.rpc.cluster.loadbalance;
 
+import com.alibaba.dubbo.common.Constants;
+import com.alibaba.dubbo.common.URL;
+import com.alibaba.dubbo.rpc.Invocation;
+import com.alibaba.dubbo.rpc.Invoker;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -24,14 +29,9 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import com.alibaba.dubbo.common.Constants;
-import com.alibaba.dubbo.common.URL;
-import com.alibaba.dubbo.rpc.Invocation;
-import com.alibaba.dubbo.rpc.Invoker;
-
 /**
  * ConsistentHashLoadBalance
- * 
+ *
  * @author william.liangf
  */
 public class ConsistentHashLoadBalance extends AbstractLoadBalance {
@@ -41,9 +41,9 @@ public class ConsistentHashLoadBalance extends AbstractLoadBalance {
     @SuppressWarnings("unchecked")
     @Override
     protected <T> Invoker<T> doSelect(List<Invoker<T>> invokers, URL url, Invocation invocation) {
-        String key = invokers.get(0).getUrl().getServiceKey() + "." + invocation.getMethodName();
-        int identityHashCode = System.identityHashCode(invokers);
-        ConsistentHashSelector<T> selector = (ConsistentHashSelector<T>) selectors.get(key);
+        String                    key              = invokers.get(0).getUrl().getServiceKey() + "." + invocation.getMethodName();
+        int                       identityHashCode = System.identityHashCode(invokers);
+        ConsistentHashSelector<T> selector         = (ConsistentHashSelector<T>) selectors.get(key);
         if (selector == null || selector.getIdentityHashCode() != identityHashCode) {
             selectors.put(key, new ConsistentHashSelector<T>(invokers, invocation.getMethodName(), identityHashCode));
             selector = (ConsistentHashSelector<T>) selectors.get(key);
@@ -55,11 +55,11 @@ public class ConsistentHashLoadBalance extends AbstractLoadBalance {
 
         private final TreeMap<Long, Invoker<T>> virtualInvokers;
 
-        private final int                       replicaNumber;
-        
-        private final int                       identityHashCode;
-        
-        private final int[]                     argumentIndex;
+        private final int replicaNumber;
+
+        private final int identityHashCode;
+
+        private final int[] argumentIndex;
 
         public ConsistentHashSelector(List<Invoker<T>> invokers, String methodName, int identityHashCode) {
             this.virtualInvokers = new TreeMap<Long, Invoker<T>>();
@@ -68,7 +68,7 @@ public class ConsistentHashLoadBalance extends AbstractLoadBalance {
             this.replicaNumber = url.getMethodParameter(methodName, "hash.nodes", 160);
             String[] index = Constants.COMMA_SPLIT_PATTERN.split(url.getMethodParameter(methodName, "hash.arguments", "0"));
             argumentIndex = new int[index.length];
-            for (int i = 0; i < index.length; i ++) {
+            for (int i = 0; i < index.length; i++) {
                 argumentIndex[i] = Integer.parseInt(index[i]);
             }
             for (Invoker<T> invoker : invokers) {
@@ -87,8 +87,8 @@ public class ConsistentHashLoadBalance extends AbstractLoadBalance {
         }
 
         public Invoker<T> select(Invocation invocation) {
-            String key = toKey(invocation.getArguments());
-            byte[] digest = md5(key);
+            String     key     = toKey(invocation.getArguments());
+            byte[]     digest  = md5(key);
             Invoker<T> invoker = sekectForKey(hash(digest, 0));
             return invoker;
         }
@@ -105,7 +105,7 @@ public class ConsistentHashLoadBalance extends AbstractLoadBalance {
 
         private Invoker<T> sekectForKey(long hash) {
             Invoker<T> invoker;
-            Long key = hash;
+            Long       key = hash;
             if (!virtualInvokers.containsKey(key)) {
                 SortedMap<Long, Invoker<T>> tailMap = virtualInvokers.tailMap(key);
                 if (tailMap.isEmpty()) {
@@ -121,8 +121,8 @@ public class ConsistentHashLoadBalance extends AbstractLoadBalance {
         private long hash(byte[] digest, int number) {
             return (((long) (digest[3 + number * 4] & 0xFF) << 24)
                     | ((long) (digest[2 + number * 4] & 0xFF) << 16)
-                    | ((long) (digest[1 + number * 4] & 0xFF) << 8) 
-                    | (digest[0 + number * 4] & 0xFF)) 
+                    | ((long) (digest[1 + number * 4] & 0xFF) << 8)
+                    | (digest[0 + number * 4] & 0xFF))
                     & 0xFFFFFFFFL;
         }
 

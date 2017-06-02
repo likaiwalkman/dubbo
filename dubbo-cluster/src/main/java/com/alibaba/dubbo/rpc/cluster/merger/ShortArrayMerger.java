@@ -29,7 +29,7 @@ public class ShortArrayMerger implements Merger<short[]> {
             total += array.length;
         }
         short[] result = new short[total];
-        int index = 0;
+        int     index  = 0;
         for (short[] array : items) {
             for (short item : array) {
                 result[index++] = item;

@@ -15,44 +15,35 @@
  */
 package com.alibaba.dubbo.governance.web.sysinfo.module.screen;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.alibaba.dubbo.common.utils.StringUtils;
 import com.alibaba.dubbo.governance.service.ConsumerService;
 import com.alibaba.dubbo.governance.service.ProviderService;
 import com.alibaba.dubbo.governance.web.common.module.screen.Restful;
 import com.alibaba.dubbo.registry.common.domain.Consumer;
 import com.alibaba.dubbo.registry.common.domain.Provider;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.*;
 
 /**
  * @author tony.chenl
  */
 public class Dump extends Restful {
-    
-    @Autowired
-    ProviderService         providerDAO;
 
     @Autowired
-    ConsumerService         consumerDAO;
+    ProviderService providerDAO;
+
+    @Autowired
+    ConsumerService consumerDAO;
 
     @Autowired
     HttpServletResponse response;
 
     public void noProviders(Map<String, Object> context) throws IOException {
-        PrintWriter writer = response.getWriter();
+        PrintWriter  writer        = response.getWriter();
         List<String> sortedService = getNoProviders();
         Collections.sort(sortedService);
         writer.println(sortedService.size() + " services don't have provider");
@@ -64,7 +55,7 @@ public class Dump extends Restful {
     }
 
     public void services(Map<String, Object> context) throws IOException {
-        PrintWriter writer = response.getWriter();
+        PrintWriter  writer        = response.getWriter();
         List<String> sortedService = providerDAO.findServices();
         Collections.sort(sortedService);
         writer.println(sortedService.size() + " services");
@@ -76,9 +67,9 @@ public class Dump extends Restful {
     }
 
     public void providers(Map<String, Object> context) throws IOException {
-        PrintWriter writer = response.getWriter();
-        List<Provider> providers = providerDAO.findAll();
-        List<String> sortedProviders = new ArrayList<String>();
+        PrintWriter    writer          = response.getWriter();
+        List<Provider> providers       = providerDAO.findAll();
+        List<String>   sortedProviders = new ArrayList<String>();
         for (Provider provider : providers) {
             sortedProviders.add(provider.getUrl() + " " + provider.getService());
         }
@@ -92,9 +83,9 @@ public class Dump extends Restful {
     }
 
     public void consumers(Map<String, Object> context) throws IOException {
-        PrintWriter writer = response.getWriter();
-        List<Consumer> consumers = consumerDAO.findAll();
-        List<String> sortedConsumerss = new ArrayList<String>();
+        PrintWriter    writer           = response.getWriter();
+        List<Consumer> consumers        = consumerDAO.findAll();
+        List<String>   sortedConsumerss = new ArrayList<String>();
         for (Consumer consumer : consumers) {
             sortedConsumerss.add(consumer.getAddress() + " " + consumer.getService());
         }
@@ -106,13 +97,13 @@ public class Dump extends Restful {
         writer.flush();
         response.setContentType("text/plain");
     }
-    
+
     public void versions(Map<String, Object> context) throws IOException {
-        PrintWriter writer = response.getWriter();
-        List<Provider> providers = providerDAO.findAll();
-        List<Consumer> consumers = consumerDAO.findAll();
-        Set<String> parametersSet = new HashSet<String>();
-        Map<String, Set<String>> versions = new HashMap<String, Set<String>>();
+        PrintWriter              writer        = response.getWriter();
+        List<Provider>           providers     = providerDAO.findAll();
+        List<Consumer>           consumers     = consumerDAO.findAll();
+        Set<String>              parametersSet = new HashSet<String>();
+        Map<String, Set<String>> versions      = new HashMap<String, Set<String>>();
         for (Provider provider : providers) {
             parametersSet.add(provider.getParameters());
         }
@@ -124,7 +115,7 @@ public class Dump extends Restful {
             Map<String, String> parameter = StringUtils.parseQueryString(temp.next());
             if (parameter != null) {
                 String dubboversion = parameter.get("dubbo");
-                String app = parameter.get("application");
+                String app          = parameter.get("application");
                 if (versions.get(dubboversion) == null) {
                     Set<String> apps = new HashSet<String>();
                     versions.put(dubboversion, apps);
@@ -141,10 +132,10 @@ public class Dump extends Restful {
         writer.flush();
         response.setContentType("text/plain");
     }
-    
+
     private List<String> getNoProviders() {
-        List<String> providerServices = providerDAO.findServices();
-        List<String> consumerServices = consumerDAO.findServices();
+        List<String> providerServices   = providerDAO.findServices();
+        List<String> consumerServices   = consumerDAO.findServices();
         List<String> noProviderServices = new ArrayList<String>();
         if (consumerServices != null) {
             noProviderServices.addAll(consumerServices);

@@ -7,37 +7,32 @@
  */
 package com.alibaba.dubbo.governance.web.common.resolver;
 
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-
 import com.alibaba.citrus.turbine.Context;
 import com.alibaba.citrus.turbine.TurbineRunDataInternal;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
+
 /**
  * ParameterMap
- * 
+ *
  * @author william.liangf
  */
 public class ParameterMap implements Map<String, Object> {
-    
+
     private static final String CONTEXT_PREFIX = "context.";
 
     private static final String PARAMETER_PREFIX = "parameter.";
 
     private static final String HEADER_PREFIX = "header.";
-    
+
     private static final String REQUEST_PREFIX = "request.";
-    
+
     private static final String SESSION_PREFIX = "session.";
-    
+
     private static final String COOKIE_PREFIX = "cookie.";
-    
+
     private static final String APPLICATION_PREFIX = "application.";
 
     private static final String RUNDATA_PREFIX = "rundata.";
@@ -47,7 +42,7 @@ public class ParameterMap implements Map<String, Object> {
     private static final String REMOTE_HOST_KEY = REQUEST_PREFIX + "remoteHost";
 
     private static final String CONTEXT_PATH_KEY = REQUEST_PREFIX + "contextPath";
-    
+
     private static final String USER_PRINCIPAL_KEY = REQUEST_PREFIX + "userPrincipal";
 
     private static final String TARGET_KEY = RUNDATA_PREFIX + "target";
@@ -65,20 +60,20 @@ public class ParameterMap implements Map<String, Object> {
     private static final String LAYOUT_ENABLED_KEY = RUNDATA_PREFIX + "layoutEnabled";
 
     private final HttpServletRequest request;
-    
+
     private final Context context;
-    
+
     private final TurbineRunDataInternal rundata;
 
     @SuppressWarnings("unchecked")
-    public ParameterMap(HttpServletRequest request, Context context, TurbineRunDataInternal navigator){
+    public ParameterMap(HttpServletRequest request, Context context, TurbineRunDataInternal navigator) {
         super();
         this.request = request;
         this.context = context;
         this.rundata = navigator;
         Enumeration<String> keys = request.getParameterNames();
         while (keys.hasMoreElements()) {
-            String key = keys.nextElement();
+            String key   = keys.nextElement();
             Object value = getParameterValue(key);
             context.put(key, value);
         }
@@ -174,18 +169,18 @@ public class ParameterMap implements Map<String, Object> {
             return value;
         }
     }
-    
+
     private Object getParameterValue(String key) {
         String[] values = request.getParameterValues(key);
         if (values == null || values.length == 0) {
             return null;
         } else if (values.length == 1) {
             return values[0];
-        } else  {
+        } else {
             return values;
         }
     }
-    
+
     private Object getCookieValue(String key) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null && cookies.length > 0) {
@@ -241,7 +236,7 @@ public class ParameterMap implements Map<String, Object> {
                 return old;
             } else if (key.startsWith(COOKIE_PREFIX)) {
                 key = key.substring(APPLICATION_PREFIX.length());
-                Object old = null;
+                Object   old     = null;
                 Cookie[] cookies = request.getCookies();
                 if (cookies != null && cookies.length > 0) {
                     for (Cookie cookie : cookies) {
@@ -307,7 +302,7 @@ public class ParameterMap implements Map<String, Object> {
     }
 
     public Collection<Object> values() {
-        Set<String> keys = context.keySet();
+        Set<String> keys   = context.keySet();
         Set<Object> values = new HashSet<Object>();
         if (keys != null && keys.size() > 0) {
             for (String key : keys) {
@@ -318,7 +313,7 @@ public class ParameterMap implements Map<String, Object> {
     }
 
     public Set<Entry<String, Object>> entrySet() {
-        Set<String> keys = context.keySet();
+        Set<String>                keys    = context.keySet();
         Set<Entry<String, Object>> entries = new HashSet<Entry<String, Object>>();
         if (keys != null && keys.size() > 0) {
             for (String key : keys) {
@@ -327,14 +322,14 @@ public class ParameterMap implements Map<String, Object> {
         }
         return entries;
     }
-    
+
     private class ParameterEntry implements Entry<String, Object> {
 
         private final String key;
-        
+
         private volatile Object value;
 
-        public ParameterEntry(String key){
+        public ParameterEntry(String key) {
             this.key = key;
             this.value = ParameterMap.this.get(key);
         }

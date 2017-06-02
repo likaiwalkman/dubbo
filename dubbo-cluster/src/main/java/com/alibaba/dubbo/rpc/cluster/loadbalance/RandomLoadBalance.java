@@ -15,12 +15,12 @@
  */
 package com.alibaba.dubbo.rpc.cluster.loadbalance;
 
-import java.util.List;
-import java.util.Random;
-
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.rpc.Invocation;
 import com.alibaba.dubbo.rpc.Invoker;
+
+import java.util.List;
+import java.util.Random;
 
 /**
  * random load balance.
@@ -35,9 +35,9 @@ public class RandomLoadBalance extends AbstractLoadBalance {
     private final Random random = new Random();
 
     protected <T> Invoker<T> doSelect(List<Invoker<T>> invokers, URL url, Invocation invocation) {
-        int length = invokers.size(); // 总个数
-        int totalWeight = 0; // 总权重
-        boolean sameWeight = true; // 权重是否都一样
+        int     length      = invokers.size(); // 总个数
+        int     totalWeight = 0; // 总权重
+        boolean sameWeight  = true; // 权重是否都一样
         for (int i = 0; i < length; i++) {
             int weight = getWeight(invokers.get(i), invocation);
             totalWeight += weight; // 累计总权重
@@ -46,7 +46,7 @@ public class RandomLoadBalance extends AbstractLoadBalance {
                 sameWeight = false; // 计算所有权重是否一样
             }
         }
-        if (totalWeight > 0 && ! sameWeight) {
+        if (totalWeight > 0 && !sameWeight) {
             // 如果权重不相同且权重大于0则按总权重数随机
             int offset = random.nextInt(totalWeight);
             // 并确定随机值落在哪个片断上

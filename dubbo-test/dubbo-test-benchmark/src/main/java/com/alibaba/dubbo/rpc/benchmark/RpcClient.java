@@ -20,16 +20,17 @@ import java.util.concurrent.CyclicBarrier;
 
 /**
  * RpcClient.java
+ *
  * @author tony.chenl
  */
-public class RpcClient extends AbstractClientRunnable{
+public class RpcClient extends AbstractClientRunnable {
     private static String message = null;
-    private static int length = 100;
-    
-    static{
-        length = Integer.valueOf(System.getProperty("message.length","1000"));
+    private static int    length  = 100;
+
+    static {
+        length = Integer.valueOf(System.getProperty("message.length", "1000"));
         StringBuilder sb = new StringBuilder();
-        for(int i=0;i<length;i++){
+        for (int i = 0; i < length; i++) {
             sb.append("a");
         }
         message = sb.toString();
@@ -46,15 +47,15 @@ public class RpcClient extends AbstractClientRunnable{
      * @param endTime
      */
     public RpcClient(String targetIP, int targetPort, int clientNums, int rpcTimeout, CyclicBarrier barrier,
-                     CountDownLatch latch, long startTime, long endTime){
+                     CountDownLatch latch, long startTime, long endTime) {
         super(targetIP, targetPort, clientNums, rpcTimeout, barrier, latch, startTime, endTime);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public Object invoke(ServiceFactory serviceFactory) {
         DemoService demoService = (DemoService) serviceFactory.get(DemoService.class);
-        Object result = demoService.sendRequest(message);
+        Object      result      = demoService.sendRequest(message);
         return result;
        /*if(result.equals(message)){
             return result;

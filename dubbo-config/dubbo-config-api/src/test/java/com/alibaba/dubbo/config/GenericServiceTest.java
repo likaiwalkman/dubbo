@@ -15,16 +15,6 @@
  */
 package com.alibaba.dubbo.config;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.alibaba.dubbo.common.Constants;
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
 import com.alibaba.dubbo.common.serialize.Serialization;
@@ -34,14 +24,23 @@ import com.alibaba.dubbo.config.api.User;
 import com.alibaba.dubbo.config.provider.impl.DemoServiceImpl;
 import com.alibaba.dubbo.rpc.service.GenericException;
 import com.alibaba.dubbo.rpc.service.GenericService;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * GenericServiceTest
- * 
+ *
  * @author william.liangf
  */
 public class GenericServiceTest {
-    
+
     @Test
     public void testGenericServiceException() {
         ServiceConfig<GenericService> service = new ServiceConfig<GenericService>();
@@ -113,11 +112,11 @@ public class GenericServiceTest {
             GenericService genericService = reference.get();
             try {
                 List<Map<String, Object>> users = new ArrayList<Map<String, Object>>();
-                Map<String, Object> user = new HashMap<String, Object>();
+                Map<String, Object>       user  = new HashMap<String, Object>();
                 user.put("class", "com.alibaba.dubbo.config.api.User");
                 user.put("name", "actual.provider");
                 users.add(user);
-                users = (List<Map<String, Object>>) genericService.$invoke("getUsers", new String[] {List.class.getName()}, new Object[] {users});
+                users = (List<Map<String, Object>>) genericService.$invoke("getUsers", new String[]{List.class.getName()}, new Object[]{users});
                 Assert.assertEquals(1, users.size());
                 Assert.assertEquals("actual.provider", users.get(0).get("name"));
             } finally {
@@ -146,47 +145,47 @@ public class GenericServiceTest {
             reference.setGeneric(Constants.GENERIC_SERIALIZATION_NATIVE_JAVA);
             GenericService genericService = reference.get();
             try {
-                String name = "kimi";
-                ByteArrayOutputStream bos = new ByteArrayOutputStream(512);
+                String                name = "kimi";
+                ByteArrayOutputStream bos  = new ByteArrayOutputStream(512);
                 ExtensionLoader.getExtensionLoader(Serialization.class)
-                    .getExtension("nativejava").serialize(null, bos).writeObject(name);
+                        .getExtension("nativejava").serialize(null, bos).writeObject(name);
                 byte[] arg = bos.toByteArray();
                 Object obj = genericService.$invoke("sayName", new String[]{String.class.getName()}, new Object[]{arg});
                 Assert.assertTrue(obj instanceof byte[]);
                 byte[] result = (byte[]) obj;
                 Assert.assertEquals(ref.sayName(name), ExtensionLoader.getExtensionLoader(Serialization.class)
-                    .getExtension("nativejava").deserialize(null, new ByteArrayInputStream(result)).readObject().toString());
+                        .getExtension("nativejava").deserialize(null, new ByteArrayInputStream(result)).readObject().toString());
 
                 // getUsers
                 List<User> users = new ArrayList<User>();
-                User user = new User();
+                User       user  = new User();
                 user.setName(name);
                 users.add(user);
                 bos = new ByteArrayOutputStream(512);
                 ExtensionLoader.getExtensionLoader(Serialization.class)
-                    .getExtension("nativejava").serialize(null, bos).writeObject(users);
+                        .getExtension("nativejava").serialize(null, bos).writeObject(users);
                 obj = genericService.$invoke("getUsers",
-                                             new String[]{List.class.getName()},
-                                             new Object[]{bos.toByteArray()});
+                        new String[]{List.class.getName()},
+                        new Object[]{bos.toByteArray()});
                 Assert.assertTrue(obj instanceof byte[]);
                 result = (byte[]) obj;
                 Assert.assertEquals(users,
-                                    ExtensionLoader.getExtensionLoader(Serialization.class)
-                                        .getExtension("nativejava")
-                                        .deserialize(null, new ByteArrayInputStream(result))
-                                        .readObject());
+                        ExtensionLoader.getExtensionLoader(Serialization.class)
+                                .getExtension("nativejava")
+                                .deserialize(null, new ByteArrayInputStream(result))
+                                .readObject());
 
                 // echo(int)
                 bos = new ByteArrayOutputStream(512);
                 ExtensionLoader.getExtensionLoader(Serialization.class).getExtension("nativejava")
-                    .serialize(null, bos).writeObject(Integer.MAX_VALUE);
+                        .serialize(null, bos).writeObject(Integer.MAX_VALUE);
                 obj = genericService.$invoke("echo", new String[]{int.class.getName()}, new Object[]{bos.toByteArray()});
                 Assert.assertTrue(obj instanceof byte[]);
                 Assert.assertEquals(Integer.MAX_VALUE,
-                                    ExtensionLoader.getExtensionLoader(Serialization.class)
-                                        .getExtension("nativejava")
-                                        .deserialize(null, new ByteArrayInputStream((byte[]) obj))
-                                        .readObject());
+                        ExtensionLoader.getExtensionLoader(Serialization.class)
+                                .getExtension("nativejava")
+                                .deserialize(null, new ByteArrayInputStream((byte[]) obj))
+                                .readObject());
 
             } finally {
                 reference.destroy();

@@ -15,13 +15,6 @@
  */
 package com.alibaba.dubbo.rpc.protocol.dubbo.telnet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import org.easymock.EasyMock;
-import org.junit.After;
-import org.junit.Test;
-
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.common.utils.NetUtils;
 import com.alibaba.dubbo.remoting.Channel;
@@ -33,10 +26,16 @@ import com.alibaba.dubbo.rpc.RpcResult;
 import com.alibaba.dubbo.rpc.protocol.dubbo.DubboProtocol;
 import com.alibaba.dubbo.rpc.protocol.dubbo.support.DemoService;
 import com.alibaba.dubbo.rpc.protocol.dubbo.support.ProtocolUtils;
+import org.easymock.EasyMock;
+import org.junit.After;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * CountTelnetHandlerTest.java
- * 
+ *
  * @author tony.chenl
  */
 public class InvokerTelnetHandlerTest {
@@ -47,7 +46,7 @@ public class InvokerTelnetHandlerTest {
 
     @After
     public void after() {
-       ProtocolUtils.closeAll();
+        ProtocolUtils.closeAll();
     }
 
     @SuppressWarnings("unchecked")
@@ -93,7 +92,7 @@ public class InvokerTelnetHandlerTest {
         EasyMock.replay(mockChannel);
         String result = invoke.telnet(mockChannel, null);
         assertEquals("Please input method name, eg: \r\ninvoke xxxMethod(1234, \"abcd\", {\"prop\" : \"value\"})\r\ninvoke XxxService.xxxMethod(1234, \"abcd\", {\"prop\" : \"value\"})\r\ninvoke com.xxx.XxxService.xxxMethod(1234, \"abcd\", {\"prop\" : \"value\"})",
-                     result);
+                result);
         EasyMock.reset(mockChannel);
     }
 

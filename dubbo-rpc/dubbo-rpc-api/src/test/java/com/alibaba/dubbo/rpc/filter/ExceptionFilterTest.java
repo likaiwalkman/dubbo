@@ -15,25 +15,24 @@
  */
 package com.alibaba.dubbo.rpc.filter;
 
-import static org.junit.Assert.assertEquals;
-
-import org.easymock.EasyMock;
-import org.junit.Test;
-
 import com.alibaba.dubbo.common.logger.Logger;
 import com.alibaba.dubbo.rpc.Invoker;
 import com.alibaba.dubbo.rpc.RpcContext;
 import com.alibaba.dubbo.rpc.RpcException;
 import com.alibaba.dubbo.rpc.RpcInvocation;
 import com.alibaba.dubbo.rpc.support.DemoService;
+import org.easymock.EasyMock;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * ExceptionFilterTest
- * 
+ *
  * @author william.liangf
  */
 public class ExceptionFilterTest {
-    
+
     @SuppressWarnings("unchecked")
     @Test
     public void testRpcException() {
@@ -41,14 +40,14 @@ public class ExceptionFilterTest {
         RpcContext.getContext().setRemoteAddress("127.0.0.1", 1234);
         RpcException exception = new RpcException("TestRpcException");
         logger.error(EasyMock.eq("Got unchecked and undeclared exception which called by 127.0.0.1. service: " + DemoService.class.getName() + ", method: sayHello, exception: " + RpcException.class.getName() + ": TestRpcException"), EasyMock.eq(exception));
-        ExceptionFilter exceptionFilter = new ExceptionFilter(logger);
-        RpcInvocation invocation = new RpcInvocation("sayHello", new Class<?>[]{String.class}, new Object[]{"world"});
-        Invoker<DemoService> invoker = EasyMock.createMock(Invoker.class);
+        ExceptionFilter      exceptionFilter = new ExceptionFilter(logger);
+        RpcInvocation        invocation      = new RpcInvocation("sayHello", new Class<?>[]{String.class}, new Object[]{"world"});
+        Invoker<DemoService> invoker         = EasyMock.createMock(Invoker.class);
         EasyMock.expect(invoker.getInterface()).andReturn(DemoService.class);
         EasyMock.expect(invoker.invoke(EasyMock.eq(invocation))).andThrow(exception);
-        
+
         EasyMock.replay(logger, invoker);
-        
+
         try {
             exceptionFilter.invoke(invoker, invocation);
         } catch (RpcException e) {
@@ -57,5 +56,5 @@ public class ExceptionFilterTest {
         EasyMock.verify(logger, invoker);
         RpcContext.removeContext();
     }
-    
+
 }

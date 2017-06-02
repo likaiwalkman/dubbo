@@ -15,25 +15,25 @@
  */
 package com.alibaba.dubbo.cache.support;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
 import com.alibaba.dubbo.cache.Cache;
 import com.alibaba.dubbo.cache.CacheFactory;
 import com.alibaba.dubbo.common.URL;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 /**
  * AbstractCacheFactory
- * 
+ *
  * @author william.liangf
  */
 public abstract class AbstractCacheFactory implements CacheFactory {
-    
+
     private final ConcurrentMap<String, Cache> caches = new ConcurrentHashMap<String, Cache>();
 
     public Cache getCache(URL url) {
-        String key = url.toFullString();
-        Cache cache = caches.get(key);
+        String key   = url.toFullString();
+        Cache  cache = caches.get(key);
         if (cache == null) {
             caches.put(key, createCache(url));
             cache = caches.get(key);

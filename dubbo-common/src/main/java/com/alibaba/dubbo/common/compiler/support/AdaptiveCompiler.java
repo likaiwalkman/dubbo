@@ -22,7 +22,7 @@ import com.alibaba.dubbo.common.extension.ExtensionLoader;
 
 /**
  * AdaptiveCompiler. (SPI, Singleton, ThreadSafe)
- * 
+ *
  * @author william.liangf
  */
 @Adaptive
@@ -35,9 +35,9 @@ public class AdaptiveCompiler implements Compiler {
     }
 
     public Class<?> compile(String code, ClassLoader classLoader) {
-        Compiler compiler;
+        Compiler                  compiler;
         ExtensionLoader<Compiler> loader = ExtensionLoader.getExtensionLoader(Compiler.class);
-        String name = DEFAULT_COMPILER; // copy reference
+        String                    name   = DEFAULT_COMPILER; // copy reference
         if (name != null && name.length() > 0) {
             compiler = loader.getExtension(name);
         } else {

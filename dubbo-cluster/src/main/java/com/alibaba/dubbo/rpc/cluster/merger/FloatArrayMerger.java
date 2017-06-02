@@ -29,7 +29,7 @@ public class FloatArrayMerger implements Merger<float[]> {
             total += array.length;
         }
         float[] result = new float[total];
-        int index = 0;
+        int     index  = 0;
         for (float[] array : items) {
             for (float item : array) {
                 result[index++] = item;

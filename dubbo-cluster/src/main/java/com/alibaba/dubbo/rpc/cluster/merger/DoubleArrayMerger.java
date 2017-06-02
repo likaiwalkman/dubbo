@@ -29,7 +29,7 @@ public class DoubleArrayMerger implements Merger<double[]> {
             total += array.length;
         }
         double[] result = new double[total];
-        int index = 0;
+        int      index  = 0;
         for (double[] array : items) {
             for (double item : array) {
                 result[index++] = item;

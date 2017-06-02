@@ -15,10 +15,6 @@
  */
 package com.alibaba.dubbo.rpc.protocol.dubbo.page;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.common.utils.NetUtils;
 import com.alibaba.dubbo.container.page.Page;
@@ -27,19 +23,23 @@ import com.alibaba.dubbo.remoting.exchange.ExchangeChannel;
 import com.alibaba.dubbo.remoting.exchange.ExchangeServer;
 import com.alibaba.dubbo.rpc.protocol.dubbo.DubboProtocol;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * ClientsPageHandler
- * 
+ *
  * @author william.liangf
  */
 public class ClientsPageHandler implements PageHandler {
 
     public Page handle(URL url) {
-        String port = url.getParameter("port");
-        int p = port == null || port.length() == 0 ? 0 : Integer.parseInt(port);
+        String                     port    = url.getParameter("port");
+        int                        p       = port == null || port.length() == 0 ? 0 : Integer.parseInt(port);
         Collection<ExchangeServer> servers = DubboProtocol.getDubboProtocol().getServers();
-        ExchangeServer server = null;
-        StringBuilder select = new StringBuilder();
+        ExchangeServer             server  = null;
+        StringBuilder              select  = new StringBuilder();
         if (servers != null && servers.size() > 0) {
             if (servers.size() == 1) {
                 server = servers.iterator().next();
@@ -66,8 +66,8 @@ public class ClientsPageHandler implements PageHandler {
         if (server != null) {
             Collection<ExchangeChannel> channels = server.getExchangeChannels();
             for (ExchangeChannel c : channels) {
-                List<String> row = new ArrayList<String>();
-                String address = NetUtils.toAddressString(c.getRemoteAddress());
+                List<String> row     = new ArrayList<String>();
+                String       address = NetUtils.toAddressString(c.getRemoteAddress());
                 row.add(NetUtils.getHostName(address) + "/" + address);
                 rows.add(row);
             }

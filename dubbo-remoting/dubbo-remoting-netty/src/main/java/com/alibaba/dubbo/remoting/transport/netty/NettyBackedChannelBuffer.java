@@ -1,14 +1,14 @@
 package com.alibaba.dubbo.remoting.transport.netty;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-
 import com.alibaba.dubbo.common.utils.Assert;
 import com.alibaba.dubbo.remoting.buffer.ChannelBuffer;
 import com.alibaba.dubbo.remoting.buffer.ChannelBufferFactory;
 import com.alibaba.dubbo.remoting.buffer.ChannelBuffers;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
 
 /**
  * @author <a href="mailto:gang.lvg@taobao.com">kimi</a>
@@ -17,13 +17,13 @@ public class NettyBackedChannelBuffer implements ChannelBuffer {
 
     private org.jboss.netty.buffer.ChannelBuffer buffer;
 
-    public org.jboss.netty.buffer.ChannelBuffer nettyChannelBuffer() {
-        return buffer;
-    }
-
     public NettyBackedChannelBuffer(org.jboss.netty.buffer.ChannelBuffer buffer) {
         Assert.notNull(buffer, "buffer == null");
         this.buffer = buffer;
+    }
+
+    public org.jboss.netty.buffer.ChannelBuffer nettyChannelBuffer() {
+        return buffer;
     }
 
     @Override

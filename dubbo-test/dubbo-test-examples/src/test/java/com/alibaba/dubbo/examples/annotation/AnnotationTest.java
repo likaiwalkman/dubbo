@@ -15,16 +15,15 @@
  */
 package com.alibaba.dubbo.examples.annotation;
 
-import static org.junit.Assert.assertEquals;
-
+import com.alibaba.dubbo.examples.annotation.action.AnnotationAction;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.alibaba.dubbo.examples.annotation.action.AnnotationAction;
+import static org.junit.Assert.assertEquals;
 
 /**
  * AnnotationTest
- * 
+ *
  * @author william.liangf
  */
 public class AnnotationTest {
@@ -38,7 +37,7 @@ public class AnnotationTest {
             consumerContext.start();
             try {
                 AnnotationAction annotationAction = (AnnotationAction) consumerContext.getBean("annotationAction");
-                String hello = annotationAction.doSayHello("world");
+                String           hello            = annotationAction.doSayHello("world");
                 assertEquals("annotation: hello, world", hello);
             } finally {
                 consumerContext.stop();

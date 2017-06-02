@@ -23,17 +23,18 @@ import java.util.Arrays;
  */
 public class SerializablePerson implements Serializable {
     private static final long serialVersionUID = 1L;
-
-    private String name = "name1";
-    
     byte oneByte = 123;
-    
+    private String name = "name1";
     private int age = 11;
-    
+
     private String[] value = {"value1", "value2"};
-    
+
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public byte getOneByte() {
@@ -42,10 +43,6 @@ public class SerializablePerson implements Serializable {
 
     public void setOneByte(byte b) {
         this.oneByte = b;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public int getAge() {
@@ -71,8 +68,8 @@ public class SerializablePerson implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
+        final int prime  = 31;
+        int       result = 1;
         result = prime * result + age;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + Arrays.hashCode(value);

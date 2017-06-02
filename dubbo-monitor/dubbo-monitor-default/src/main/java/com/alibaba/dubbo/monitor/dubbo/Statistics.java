@@ -15,34 +15,34 @@
  */
 package com.alibaba.dubbo.monitor.dubbo;
 
-import java.io.Serializable;
-
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.monitor.MonitorService;
 
+import java.io.Serializable;
+
 /**
  * Statistics. (SPI, Prototype, ThreadSafe)
- * 
+ *
  * @author william.liangf
  */
 public class Statistics implements Serializable {
-    
+
     private static final long serialVersionUID = -6921183057683641441L;
-    
+
     private URL url;
-    
+
     private String application;
-    
+
     private String service;
 
     private String method;
-    
+
     private String group;
 
     private String version;
-    
+
     private String client;
-    
+
     private String server;
 
     public Statistics(URL url) {
@@ -127,8 +127,8 @@ public class Statistics implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
+        final int prime  = 31;
+        int       result = 1;
         result = prime * result + ((application == null) ? 0 : application.hashCode());
         result = prime * result + ((client == null) ? 0 : client.hashCode());
         result = prime * result + ((group == null) ? 0 : group.hashCode());

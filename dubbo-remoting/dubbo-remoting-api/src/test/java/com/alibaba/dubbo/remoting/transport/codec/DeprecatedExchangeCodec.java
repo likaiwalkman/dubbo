@@ -1,10 +1,5 @@
 package com.alibaba.dubbo.remoting.transport.codec;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import com.alibaba.dubbo.common.Constants;
 import com.alibaba.dubbo.common.io.Bytes;
 import com.alibaba.dubbo.common.io.StreamUtils;
 import com.alibaba.dubbo.common.io.UnsafeByteArrayInputStream;
@@ -23,31 +18,27 @@ import com.alibaba.dubbo.remoting.exchange.Response;
 import com.alibaba.dubbo.remoting.exchange.support.DefaultFuture;
 import com.alibaba.dubbo.remoting.transport.CodecSupport;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 /**
  * @author <a href="mailto:gang.lvg@taobao.com">kimi</a>
  */
 final class DeprecatedExchangeCodec extends DeprecatedTelnetCodec implements Codec {
 
-    private static final Logger logger = LoggerFactory.getLogger(DeprecatedExchangeCodec.class);
-
     // header length.
     protected static final int HEADER_LENGTH = 16;
-
     // magic header.
     protected static final short MAGIC = (short) 0xdabb;
-
     protected static final byte MAGIC_HIGH = Bytes.short2bytes(MAGIC)[0];
-
     protected static final byte MAGIC_LOW = Bytes.short2bytes(MAGIC)[1];
-
     // message flag.
     protected static final byte FLAG_REQUEST = (byte) 0x80;
-
     protected static final byte FLAG_TWOWAY = (byte) 0x40;
-
     protected static final byte FLAG_EVENT = (byte) 0x20;
-
     protected static final int SERIALIZATION_MASK = 0x1f;
+    private static final Logger logger = LoggerFactory.getLogger(DeprecatedExchangeCodec.class);
 
     public Short getMagicCode() {
         return MAGIC;
@@ -64,8 +55,8 @@ final class DeprecatedExchangeCodec extends DeprecatedTelnetCodec implements Cod
     }
 
     public Object decode(Channel channel, InputStream is) throws IOException {
-        int readable = is.available();
-        byte[] header = new byte[Math.min(readable, HEADER_LENGTH)];
+        int    readable = is.available();
+        byte[] header   = new byte[Math.min(readable, HEADER_LENGTH)];
         is.read(header);
         return decode(channel, is, readable, header);
     }
@@ -73,7 +64,7 @@ final class DeprecatedExchangeCodec extends DeprecatedTelnetCodec implements Cod
     protected Object decode(Channel channel, InputStream is, int readable, byte[] header) throws IOException {
         // check magic number.
         if (readable > 0 && header[0] != MAGIC_HIGH
-            || readable > 1 && header[1] != MAGIC_LOW) {
+                || readable > 1 && header[1] != MAGIC_LOW) {
             int length = header.length;
             if (header.length < readable) {
                 header = Bytes.copyOf(header, readable);
@@ -124,9 +115,9 @@ final class DeprecatedExchangeCodec extends DeprecatedTelnetCodec implements Cod
     }
 
     protected Object decodeBody(Channel channel, InputStream is, byte[] header) throws IOException {
-        byte flag = header[2], proto = (byte) (flag & SERIALIZATION_MASK);
-        Serialization s = CodecSupport.getSerialization(channel.getUrl(), proto);
-        ObjectInput in = s.deserialize(channel.getUrl(), is);
+        byte          flag = header[2], proto = (byte) (flag & SERIALIZATION_MASK);
+        Serialization s    = CodecSupport.getSerialization(channel.getUrl(), proto);
+        ObjectInput   in   = s.deserialize(channel.getUrl(), is);
         // get request id.
         long id = Bytes.bytes2long(header, 4);
         if ((flag & FLAG_REQUEST) == 0) {
@@ -212,7 +203,7 @@ final class DeprecatedExchangeCodec extends DeprecatedTelnetCodec implements Cod
 
         // encode request data.
         UnsafeByteArrayOutputStream bos = new UnsafeByteArrayOutputStream(1024);
-        ObjectOutput out = serialization.serialize(channel.getUrl(), bos);
+        ObjectOutput                out = serialization.serialize(channel.getUrl(), bos);
         if (req.isEvent()) {
             encodeEventData(channel, out, req.getData());
         } else {
@@ -247,7 +238,7 @@ final class DeprecatedExchangeCodec extends DeprecatedTelnetCodec implements Cod
             Bytes.long2bytes(res.getId(), header, 4);
 
             UnsafeByteArrayOutputStream bos = new UnsafeByteArrayOutputStream(1024);
-            ObjectOutput out = serialization.serialize(channel.getUrl(), bos);
+            ObjectOutput                out = serialization.serialize(channel.getUrl(), bos);
             // encode response data or error message.
             if (status == Response.OK) {
                 if (res.isHeartbeat()) {

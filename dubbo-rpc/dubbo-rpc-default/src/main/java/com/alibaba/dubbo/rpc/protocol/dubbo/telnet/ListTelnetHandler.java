@@ -15,8 +15,6 @@
  */
 package com.alibaba.dubbo.rpc.protocol.dubbo.telnet;
 
-import java.lang.reflect.Method;
-
 import com.alibaba.dubbo.common.extension.Activate;
 import com.alibaba.dubbo.common.utils.ReflectUtils;
 import com.alibaba.dubbo.remoting.Channel;
@@ -26,9 +24,11 @@ import com.alibaba.dubbo.rpc.Exporter;
 import com.alibaba.dubbo.rpc.Invoker;
 import com.alibaba.dubbo.rpc.protocol.dubbo.DubboProtocol;
 
+import java.lang.reflect.Method;
+
 /**
  * ListTelnetHandler
- * 
+ *
  * @author william.liangf
  */
 @Activate
@@ -36,9 +36,9 @@ import com.alibaba.dubbo.rpc.protocol.dubbo.DubboProtocol;
 public class ListTelnetHandler implements TelnetHandler {
 
     public String telnet(Channel channel, String message) {
-        StringBuilder buf = new StringBuilder();
-        String service = null;
-        boolean detail = false;
+        StringBuilder buf     = new StringBuilder();
+        String        service = null;
+        boolean       detail  = false;
         if (message.length() > 0) {
             String[] parts = message.split("\\s+");
             for (String part : parts) {

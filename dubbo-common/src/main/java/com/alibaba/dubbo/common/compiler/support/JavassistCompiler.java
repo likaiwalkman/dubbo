@@ -15,6 +15,9 @@
  */
 package com.alibaba.dubbo.common.compiler.support;
 
+import com.alibaba.dubbo.common.utils.ClassHelper;
+import javassist.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,18 +25,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.alibaba.dubbo.common.utils.ClassHelper;
-
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtField;
-import javassist.CtNewConstructor;
-import javassist.CtNewMethod;
-import javassist.LoaderClassPath;
-
 /**
  * JavassistCompiler. (SPI, Singleton, ThreadSafe)
- * 
+ *
  * @author william.liangf
  */
 public class JavassistCompiler extends AbstractCompiler {
@@ -43,20 +37,20 @@ public class JavassistCompiler extends AbstractCompiler {
     private static final Pattern EXTENDS_PATTERN = Pattern.compile("\\s+extends\\s+([\\w\\.]+)[^\\{]*\\{\n");
 
     private static final Pattern IMPLEMENTS_PATTERN = Pattern.compile("\\s+implements\\s+([\\w\\.]+)\\s*\\{\n");
-    
+
     private static final Pattern METHODS_PATTERN = Pattern.compile("\n(private|public|protected)\\s+");
 
     private static final Pattern FIELD_PATTERN = Pattern.compile("[^\n]+=[^\n]+;");
 
     @Override
     public Class<?> doCompile(String name, String source) throws Throwable {
-        int i = name.lastIndexOf('.');
-        String className = i < 0 ? name : name.substring(i + 1);
-        ClassPool pool = new ClassPool(true);
+        int       i         = name.lastIndexOf('.');
+        String    className = i < 0 ? name : name.substring(i + 1);
+        ClassPool pool      = new ClassPool(true);
         pool.appendClassPath(new LoaderClassPath(ClassHelper.getCallerClassLoader(getClass())));
-        Matcher matcher = IMPORT_PATTERN.matcher(source);
-        List<String> importPackages = new ArrayList<String>();
-        Map<String, String> fullNames = new HashMap<String, String>();
+        Matcher             matcher        = IMPORT_PATTERN.matcher(source);
+        List<String>        importPackages = new ArrayList<String>();
+        Map<String, String> fullNames      = new HashMap<String, String>();
         while (matcher.find()) {
             String pkg = matcher.group(1);
             if (pkg.endsWith(".*")) {
@@ -66,10 +60,10 @@ public class JavassistCompiler extends AbstractCompiler {
             } else {
                 int pi = pkg.lastIndexOf('.');
                 if (pi > 0) {
-	                String pkgName = pkg.substring(0, pi);
-	                pool.importPackage(pkgName);
-	                importPackages.add(pkgName);
-	                fullNames.put(pkg.substring(pi + 1), pkg);
+                    String pkgName = pkg.substring(0, pi);
+                    pool.importPackage(pkgName);
+                    importPackages.add(pkgName);
+                    fullNames.put(pkg.substring(pi + 1), pkg);
                 }
             }
         }
@@ -106,7 +100,7 @@ public class JavassistCompiler extends AbstractCompiler {
                 cls.addInterface(pool.get(ifaceClass));
             }
         }
-        String body = source.substring(source.indexOf("{") + 1, source.length() - 1);
+        String   body    = source.substring(source.indexOf("{") + 1, source.length() - 1);
         String[] methods = METHODS_PATTERN.split(body);
         for (String method : methods) {
             method = method.trim();

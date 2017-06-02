@@ -15,28 +15,25 @@
  */
 package com.alibaba.dubbo.registry.support;
 
-import java.util.List;
-
-import junit.framework.Assert;
-
-import org.junit.Test;
-
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.common.utils.NetUtils;
 import com.alibaba.dubbo.registry.NotifyListener;
 import com.alibaba.dubbo.registry.Registry;
 import com.alibaba.dubbo.registry.RegistryFactory;
-import com.alibaba.dubbo.registry.support.AbstractRegistryFactory;
+import junit.framework.Assert;
+import org.junit.Test;
+
+import java.util.List;
 
 /**
  * AbstractRegistryFactoryTest
- * 
+ *
  * @author william.liangf
  */
 public class AbstractRegistryFactoryTest {
-    
+
     private RegistryFactory registryFactory = new AbstractRegistryFactory() {
-        
+
         @Override
         protected Registry createRegistry(final URL url) {
             return new Registry() {
@@ -67,19 +64,19 @@ public class AbstractRegistryFactoryTest {
                 public List<URL> lookup(URL url) {
                     return null;
                 }
-                
+
             };
         }
     };
-    
+
     @Test
     public void testRegistryFactoryCache() throws Exception {
-        URL url = URL.valueOf("dubbo://" + NetUtils.getLocalAddress().getHostAddress() + ":2233");
+        URL      url       = URL.valueOf("dubbo://" + NetUtils.getLocalAddress().getHostAddress() + ":2233");
         Registry registry1 = registryFactory.getRegistry(url);
         Registry registry2 = registryFactory.getRegistry(url);
         Assert.assertEquals(registry1, registry2);
     }
-    
+
     @Test
     public void testRegistryFactoryIpCache() throws Exception {
         Registry registry1 = registryFactory.getRegistry(URL.valueOf("dubbo://" + NetUtils.getLocalAddress().getHostName() + ":2233"));

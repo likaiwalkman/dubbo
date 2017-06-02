@@ -15,30 +15,19 @@
  */
 package com.alibaba.dubbo.container.page;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import com.alibaba.dubbo.common.Constants;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.alibaba.dubbo.common.Constants;
-
 /**
  * ResourceServlet
- * 
+ *
  * @author william.liangf
  */
 public class ResourceFilter implements Filter {
@@ -67,40 +56,40 @@ public class ResourceFilter implements Filter {
 
     public void destroy() {
     }
-    
+
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest) req;
+        HttpServletRequest  request  = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
         if (response.isCommitted()) {
             return;
         }
-        String uri = request.getRequestURI();
+        String uri     = request.getRequestURI();
         String context = request.getContextPath();
         if (uri.endsWith("/favicon.ico")) {
             uri = "/favicon.ico";
-        } else if (context != null && ! "/".equals(context)) {
+        } else if (context != null && !"/".equals(context)) {
             uri = uri.substring(context.length());
         }
-        if (! uri.startsWith("/")) {
+        if (!uri.startsWith("/")) {
             uri = "/" + uri;
         }
         long lastModified = getLastModified(uri);
-        long since = request.getDateHeader("If-Modified-Since");
+        long since        = request.getDateHeader("If-Modified-Since");
         if (since >= lastModified) {
-        	response.sendError(HttpServletResponse.SC_NOT_MODIFIED);
-        	return;
-        }
-        byte[] data;
-        InputStream input = getInputStream(uri);
-    	if (input == null) {
-    	    chain.doFilter(req, res);
+            response.sendError(HttpServletResponse.SC_NOT_MODIFIED);
             return;
         }
-    	try {
+        byte[]      data;
+        InputStream input = getInputStream(uri);
+        if (input == null) {
+            chain.doFilter(req, res);
+            return;
+        }
+        try {
             ByteArrayOutputStream output = new ByteArrayOutputStream();
-            byte[] buffer = new byte[8192];
-            int n = 0;
+            byte[]                buffer = new byte[8192];
+            int                   n      = 0;
             while (-1 != (n = input.read(buffer))) {
                 output.write(buffer, 0, n);
             }
@@ -113,13 +102,13 @@ public class ResourceFilter implements Filter {
         output.write(data);
         output.flush();
     }
-    
+
     private boolean isFile(String path) {
         return path.startsWith("/") || path.indexOf(":") <= 1;
     }
-	
-	private long getLastModified(String uri) {
-	    for (String resource : resources) {
+
+    private long getLastModified(String uri) {
+        for (String resource : resources) {
             if (resource != null && resource.length() > 0) {
                 String path = resource + uri;
                 if (isFile(path)) {
@@ -131,9 +120,9 @@ public class ResourceFilter implements Filter {
             }
         }
         return start;
-	}
-	
-	private InputStream getInputStream(String uri) {
+    }
+
+    private InputStream getInputStream(String uri) {
         for (String resource : resources) {
             String path = resource + uri;
             try {
@@ -148,6 +137,6 @@ public class ResourceFilter implements Filter {
             }
         }
         return null;
-	}
+    }
 
 }

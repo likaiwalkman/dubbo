@@ -15,13 +15,12 @@
  */
 package com.alibaba.dubbo.common.utils;
 
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.log4j.Level;
-
 import com.alibaba.dubbo.common.logger.Logger;
 import com.alibaba.dubbo.common.logger.LoggerFactory;
+import org.apache.log4j.Level;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author tony.chenl
@@ -33,7 +32,7 @@ public class LogUtil {
     public static void start() {
         DubboAppender.doStart();
     }
-    
+
     public static void stop() {
         DubboAppender.doStop();
     }
@@ -48,7 +47,7 @@ public class LogUtil {
     }
 
     public static int findName(String expectedLogName) {
-        int count = 0;
+        int       count   = 0;
         List<Log> logList = DubboAppender.logList;
         for (int i = 0; i < logList.size(); i++) {
             String logName = logList.get(i).getLogName();
@@ -58,7 +57,7 @@ public class LogUtil {
     }
 
     public static int findLevel(Level expectedLevel) {
-        int count = 0;
+        int       count   = 0;
         List<Log> logList = DubboAppender.logList;
         for (int i = 0; i < logList.size(); i++) {
             Level logLevel = logList.get(i).getLogLevel();
@@ -66,20 +65,20 @@ public class LogUtil {
         }
         return count;
     }
-    
-    public static int findLevelWithThreadName(Level expectedLevel,String threadName) {
-        int count = 0;
+
+    public static int findLevelWithThreadName(Level expectedLevel, String threadName) {
+        int       count   = 0;
         List<Log> logList = DubboAppender.logList;
         for (int i = 0; i < logList.size(); i++) {
             Log log = logList.get(i);
-            if (log.getLogLevel().equals(expectedLevel) && log.getLogThread().equals(threadName)) 
+            if (log.getLogLevel().equals(expectedLevel) && log.getLogThread().equals(threadName))
                 count++;
         }
         return count;
     }
 
     public static int findThread(String expectedThread) {
-        int count = 0;
+        int       count   = 0;
         List<Log> logList = DubboAppender.logList;
         for (int i = 0; i < logList.size(); i++) {
             String logThread = logList.get(i).getLogThread();
@@ -89,7 +88,7 @@ public class LogUtil {
     }
 
     public static int findMessage(String expectedMessage) {
-        int count = 0;
+        int       count   = 0;
         List<Log> logList = DubboAppender.logList;
         for (int i = 0; i < logList.size(); i++) {
             String logMessage = logList.get(i).getLogMessage();
@@ -97,9 +96,9 @@ public class LogUtil {
         }
         return count;
     }
-    
+
     public static int findMessage(Level expectedLevel, String expectedMessage) {
-        int count = 0;
+        int       count   = 0;
         List<Log> logList = DubboAppender.logList;
         for (int i = 0; i < logList.size(); i++) {
             Level logLevel = logList.get(i).getLogLevel();

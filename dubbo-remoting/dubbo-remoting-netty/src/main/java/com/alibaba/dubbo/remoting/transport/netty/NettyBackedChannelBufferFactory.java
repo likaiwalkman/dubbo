@@ -1,11 +1,10 @@
 package com.alibaba.dubbo.remoting.transport.netty;
 
-import java.nio.ByteBuffer;
-
-import org.jboss.netty.buffer.ChannelBuffers;
-
 import com.alibaba.dubbo.remoting.buffer.ChannelBuffer;
 import com.alibaba.dubbo.remoting.buffer.ChannelBufferFactory;
+import org.jboss.netty.buffer.ChannelBuffers;
+
+import java.nio.ByteBuffer;
 
 /**
  * Wrap netty dynamic channel buffer.

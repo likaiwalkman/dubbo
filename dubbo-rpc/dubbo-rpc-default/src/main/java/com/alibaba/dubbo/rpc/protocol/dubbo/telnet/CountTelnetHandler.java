@@ -15,10 +15,6 @@
  */
 package com.alibaba.dubbo.rpc.protocol.dubbo.telnet;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.common.extension.Activate;
 import com.alibaba.dubbo.common.utils.StringUtils;
@@ -32,9 +28,13 @@ import com.alibaba.dubbo.rpc.Invoker;
 import com.alibaba.dubbo.rpc.RpcStatus;
 import com.alibaba.dubbo.rpc.protocol.dubbo.DubboProtocol;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * CountTelnetHandler
- * 
+ *
  * @author william.liangf
  */
 @Activate
@@ -52,8 +52,8 @@ public class CountTelnetHandler implements TelnetHandler {
             buf.append("Use default service " + service + ".\r\n");
         }
         String[] parts = message.split("\\s+");
-        String method;
-        String times;
+        String   method;
+        String   times;
         if (service == null || service.length() == 0) {
             service = parts.length > 0 ? parts[0] : null;
             method = parts.length > 1 ? parts[1] : null;
@@ -66,10 +66,10 @@ public class CountTelnetHandler implements TelnetHandler {
         } else {
             times = parts.length > 2 ? parts[2] : "1";
         }
-        if (! StringUtils.isInteger(times)) {
+        if (!StringUtils.isInteger(times)) {
             return "Illegal times " + times + ", must be integer.";
         }
-        final int t = Integer.parseInt(times);
+        final int  t       = Integer.parseInt(times);
         Invoker<?> invoker = null;
         for (Exporter<?> exporter : DubboProtocol.getDubboProtocol().getExporters()) {
             if (service.equals(exporter.getInvoker().getInterface().getSimpleName())
@@ -81,12 +81,12 @@ public class CountTelnetHandler implements TelnetHandler {
         }
         if (invoker != null) {
             if (t > 0) {
-                final String mtd = method;
-                final Invoker<?> inv = invoker;
-                final String prompt = channel.getUrl().getParameter("prompt", "telnet");
+                final String     mtd    = method;
+                final Invoker<?> inv    = invoker;
+                final String     prompt = channel.getUrl().getParameter("prompt", "telnet");
                 Thread thread = new Thread(new Runnable() {
                     public void run() {
-                        for (int i = 0; i < t; i ++) {
+                        for (int i = 0; i < t; i++) {
                             String result = count(inv, mtd);
                             try {
                                 channel.send("\r\n" + result);
@@ -115,11 +115,11 @@ public class CountTelnetHandler implements TelnetHandler {
         }
         return buf.toString();
     }
-    
+
     private String count(Invoker<?> invoker, String method) {
-        URL url = invoker.getUrl();
-        List<List<String>> table = new ArrayList<List<String>>();
-        List<String> header = new ArrayList<String>();
+        URL                url    = invoker.getUrl();
+        List<List<String>> table  = new ArrayList<List<String>>();
+        List<String>       header = new ArrayList<String>();
         header.add("method");
         header.add("total");
         header.add("failed");
@@ -128,8 +128,8 @@ public class CountTelnetHandler implements TelnetHandler {
         header.add("max");
         if (method == null || method.length() == 0) {
             for (Method m : invoker.getInterface().getMethods()) {
-                RpcStatus count = RpcStatus.getStatus(url, m.getName());
-                List<String> row = new ArrayList<String>();
+                RpcStatus    count = RpcStatus.getStatus(url, m.getName());
+                List<String> row   = new ArrayList<String>();
                 row.add(m.getName());
                 row.add(String.valueOf(count.getTotal()));
                 row.add(String.valueOf(count.getFailed()));
@@ -147,8 +147,8 @@ public class CountTelnetHandler implements TelnetHandler {
                 }
             }
             if (found) {
-                RpcStatus count = RpcStatus.getStatus(url, method);
-                List<String> row = new ArrayList<String>();
+                RpcStatus    count = RpcStatus.getStatus(url, method);
+                List<String> row   = new ArrayList<String>();
                 row.add(method);
                 row.add(String.valueOf(count.getTotal()));
                 row.add(String.valueOf(count.getFailed()));

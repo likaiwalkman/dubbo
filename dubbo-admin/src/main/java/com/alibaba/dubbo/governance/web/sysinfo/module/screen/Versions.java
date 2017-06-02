@@ -15,21 +15,15 @@
  */
 package com.alibaba.dubbo.governance.web.sysinfo.module.screen;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.alibaba.dubbo.common.utils.StringUtils;
 import com.alibaba.dubbo.governance.service.ConsumerService;
 import com.alibaba.dubbo.governance.service.ProviderService;
 import com.alibaba.dubbo.governance.web.common.module.screen.Restful;
 import com.alibaba.dubbo.registry.common.domain.Consumer;
 import com.alibaba.dubbo.registry.common.domain.Provider;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.*;
 
 /**
  * @author tony.chenl
@@ -37,14 +31,14 @@ import com.alibaba.dubbo.registry.common.domain.Provider;
 public class Versions extends Restful {
     @Autowired
     private ProviderService providerService;
-    
+
     @Autowired
     private ConsumerService consumerService;
-    
+
     public void index(Map<String, Object> context) {
-        List<Provider> providers = providerService.findAll();
-        List<Consumer> consumers = consumerService.findAll();
-        Set<String> parametersSet = new HashSet<String>();
+        List<Provider> providers     = providerService.findAll();
+        List<Consumer> consumers     = consumerService.findAll();
+        Set<String>    parametersSet = new HashSet<String>();
         for (Provider provider : providers) {
             parametersSet.add(provider.getParameters());
         }
@@ -52,12 +46,12 @@ public class Versions extends Restful {
             parametersSet.add(consumer.getParameters());
         }
         Map<String, Set<String>> versions = new HashMap<String, Set<String>>();
-        Iterator<String> temp = parametersSet.iterator();
+        Iterator<String>         temp     = parametersSet.iterator();
         while (temp.hasNext()) {
             Map<String, String> parameter = StringUtils.parseQueryString(temp.next());
             if (parameter != null) {
                 String dubbo = parameter.get("dubbo");
-                if(dubbo == null) dubbo = "0.0.0";
+                if (dubbo == null) dubbo = "0.0.0";
                 String application = parameter.get("application");
                 if (versions.get(dubbo) == null) {
                     Set<String> apps = new HashSet<String>();
@@ -70,12 +64,12 @@ public class Versions extends Restful {
     }
 
     public void show(Long[] ids, Map<String, Object> context) {
-        String version =(String)context.get("version");
+        String version = (String) context.get("version");
         if (version != null && version.length() > 0) {
-            List<Provider> providers = providerService.findAll();
-            List<Consumer> consumers = consumerService.findAll();
-            Set<String> parametersSet = new HashSet<String>();
-            Set<String> applications = new HashSet<String>();
+            List<Provider> providers     = providerService.findAll();
+            List<Consumer> consumers     = consumerService.findAll();
+            Set<String>    parametersSet = new HashSet<String>();
+            Set<String>    applications  = new HashSet<String>();
             for (Provider provider : providers) {
                 parametersSet.add(provider.getParameters());
             }
@@ -87,7 +81,7 @@ public class Versions extends Restful {
                 Map<String, String> parameter = StringUtils.parseQueryString(temp.next());
                 if (parameter != null) {
                     String dubbo = parameter.get("dubbo");
-                    if(dubbo == null) dubbo = "0.0.0";
+                    if (dubbo == null) dubbo = "0.0.0";
                     String application = parameter.get("application");
                     if (version.equals(dubbo)) {
                         applications.add(application);

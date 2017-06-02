@@ -15,20 +15,20 @@
  */
 package com.alibaba.dubbo.examples.redis;
 
-import java.util.Map;
-
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.util.Map;
 
 /**
  * GenericConsumer
- * 
+ *
  * @author chao.liuc
  */
 public class RedisConsumer {
 
     @SuppressWarnings("unchecked")
     public static void main(String[] args) throws Exception {
-        String config = RedisConsumer.class.getPackage().getName().replace('.', '/') + "/redis-consumer.xml";
+        String                         config  = RedisConsumer.class.getPackage().getName().replace('.', '/') + "/redis-consumer.xml";
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(config);
         context.start();
         Map<String, Object> cache = (Map<String, Object>) context.getBean("cache");
@@ -41,7 +41,7 @@ public class RedisConsumer {
         cache.put("hello", "world");
         value = cache.get("hello");
         System.out.println(value);
-        if (! "world".equals(value)) {
+        if (!"world".equals(value)) {
             throw new IllegalStateException(value + " != world");
         }
     }

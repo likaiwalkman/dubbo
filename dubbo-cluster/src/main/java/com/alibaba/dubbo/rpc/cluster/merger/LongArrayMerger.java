@@ -29,7 +29,7 @@ public class LongArrayMerger implements Merger<long[]> {
             total += array.length;
         }
         long[] result = new long[total];
-        int index = 0;
+        int    index  = 0;
         for (long[] array : items) {
             for (long item : array) {
                 result[index++] = item;

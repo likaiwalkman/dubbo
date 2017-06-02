@@ -15,16 +15,6 @@
  */
 package com.alibaba.dubbo.rpc.protocol.hessian;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.alibaba.dubbo.common.Constants;
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.remoting.http.HttpBinder;
@@ -39,9 +29,18 @@ import com.caucho.hessian.client.HessianProxyFactory;
 import com.caucho.hessian.io.HessianMethodSerializationException;
 import com.caucho.hessian.server.HessianSkeleton;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * http rpc support.
- * 
+ *
  * @author qianlei
  */
 public class HessianProtocol extends AbstractProxyProtocol {
@@ -51,7 +50,7 @@ public class HessianProtocol extends AbstractProxyProtocol {
     private final Map<String, HessianSkeleton> skeletonMap = new ConcurrentHashMap<String, HessianSkeleton>();
 
     private HttpBinder httpBinder;
-    
+
     public HessianProtocol() {
         super(HessianException.class);
     }
@@ -64,34 +63,14 @@ public class HessianProtocol extends AbstractProxyProtocol {
         return 80;
     }
 
-    private class HessianHandler implements HttpHandler {
-        
-        public void handle(HttpServletRequest request, HttpServletResponse response)
-                throws IOException, ServletException {
-            String uri = request.getRequestURI();
-            HessianSkeleton skeleton = skeletonMap.get(uri);
-            if (! request.getMethod().equalsIgnoreCase("POST")) {
-                response.setStatus(500);
-            } else {
-                RpcContext.getContext().setRemoteAddress(request.getRemoteAddr(), request.getRemotePort());
-                try {
-                    skeleton.invoke(request.getInputStream(), response.getOutputStream());
-                } catch (Throwable e) {
-                    throw new ServletException(e);
-                }
-            }
-        }
-        
-    }
-
     protected <T> Runnable doExport(T impl, Class<T> type, URL url) throws RpcException {
-        String addr = url.getIp() + ":" + url.getPort();
+        String     addr   = url.getIp() + ":" + url.getPort();
         HttpServer server = serverMap.get(addr);
         if (server == null) {
             server = httpBinder.bind(url, new HessianHandler());
             serverMap.put(addr, server);
         }
-        final String path = url.getAbsolutePath();
+        final String    path     = url.getAbsolutePath();
         HessianSkeleton skeleton = new HessianSkeleton(impl, type);
         skeletonMap.put(path, skeleton);
         return new Runnable() {
@@ -104,10 +83,10 @@ public class HessianProtocol extends AbstractProxyProtocol {
     @SuppressWarnings("unchecked")
     protected <T> T doRefer(Class<T> serviceType, URL url) throws RpcException {
         HessianProxyFactory hessianProxyFactory = new HessianProxyFactory();
-        String client = url.getParameter(Constants.CLIENT_KEY, Constants.DEFAULT_HTTP_CLIENT);
+        String              client              = url.getParameter(Constants.CLIENT_KEY, Constants.DEFAULT_HTTP_CLIENT);
         if ("httpclient".equals(client)) {
             hessianProxyFactory.setConnectionFactory(new HttpClientConnectionFactory());
-        } else if (client != null && client.length() > 0 && ! Constants.DEFAULT_HTTP_CLIENT.equals(client)) {
+        } else if (client != null && client.length() > 0 && !Constants.DEFAULT_HTTP_CLIENT.equals(client)) {
             throw new IllegalStateException("Unsupported http protocol client=\"" + client + "\"!");
         }
         int timeout = url.getParameter(Constants.TIMEOUT_KEY, Constants.DEFAULT_TIMEOUT);
@@ -146,6 +125,26 @@ public class HessianProtocol extends AbstractProxyProtocol {
                 }
             }
         }
+    }
+
+    private class HessianHandler implements HttpHandler {
+
+        public void handle(HttpServletRequest request, HttpServletResponse response)
+                throws IOException, ServletException {
+            String          uri      = request.getRequestURI();
+            HessianSkeleton skeleton = skeletonMap.get(uri);
+            if (!request.getMethod().equalsIgnoreCase("POST")) {
+                response.setStatus(500);
+            } else {
+                RpcContext.getContext().setRemoteAddress(request.getRemoteAddr(), request.getRemotePort());
+                try {
+                    skeleton.invoke(request.getInputStream(), response.getOutputStream());
+                } catch (Throwable e) {
+                    throw new ServletException(e);
+                }
+            }
+        }
+
     }
 
 }

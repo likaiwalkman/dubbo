@@ -15,10 +15,6 @@
  */
 package com.alibaba.dubbo.registry.pages;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.common.utils.NetUtils;
 import com.alibaba.dubbo.container.page.Menu;
@@ -28,23 +24,27 @@ import com.alibaba.dubbo.registry.Registry;
 import com.alibaba.dubbo.registry.support.AbstractRegistry;
 import com.alibaba.dubbo.registry.support.AbstractRegistryFactory;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * RegistriesPageHandler
- * 
+ *
  * @author william.liangf
  */
 @Menu(name = "Registries", desc = "Show connected registries.", order = 10000)
 public class RegistriesPageHandler implements PageHandler {
 
     public Page handle(URL url) {
-        List<List<String>> rows = new ArrayList<List<String>>();
-        Collection<Registry> registries = AbstractRegistryFactory.getRegistries();
-        int registeredCount = 0;
-        int subscribedCount = 0;
+        List<List<String>>   rows            = new ArrayList<List<String>>();
+        Collection<Registry> registries      = AbstractRegistryFactory.getRegistries();
+        int                  registeredCount = 0;
+        int                  subscribedCount = 0;
         if (registries != null && registries.size() > 0) {
             for (Registry registry : registries) {
-                String server = registry.getUrl().getAddress();
-                List<String> row = new ArrayList<String>();
+                String       server = registry.getUrl().getAddress();
+                List<String> row    = new ArrayList<String>();
                 row.add(NetUtils.getHostName(server) + "/" + server);
                 if (registry.isAvailable()) {
                     row.add("<font color=\"green\">Connected</font>");
@@ -65,7 +65,7 @@ public class RegistriesPageHandler implements PageHandler {
             }
         }
         return new Page("Registries", "Registries (" + rows.size() + ")",
-                new String[] { "Registry Address:", "Status", "Registered(" + registeredCount + ")", "Subscribed(" + subscribedCount + ")" }, rows);
+                new String[]{"Registry Address:", "Status", "Registered(" + registeredCount + ")", "Subscribed(" + subscribedCount + ")"}, rows);
     }
 
 }

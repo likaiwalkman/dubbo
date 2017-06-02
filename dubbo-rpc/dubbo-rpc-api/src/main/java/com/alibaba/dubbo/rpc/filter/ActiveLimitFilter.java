@@ -18,31 +18,26 @@ package com.alibaba.dubbo.rpc.filter;
 import com.alibaba.dubbo.common.Constants;
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.common.extension.Activate;
-import com.alibaba.dubbo.rpc.Filter;
-import com.alibaba.dubbo.rpc.Invocation;
-import com.alibaba.dubbo.rpc.Invoker;
-import com.alibaba.dubbo.rpc.Result;
-import com.alibaba.dubbo.rpc.RpcException;
-import com.alibaba.dubbo.rpc.RpcStatus;
+import com.alibaba.dubbo.rpc.*;
 
 /**
  * LimitInvokerFilter
- * 
+ *
  * @author william.liangf
  */
 @Activate(group = Constants.CONSUMER, value = Constants.ACTIVES_KEY)
 public class ActiveLimitFilter implements Filter {
 
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
-        URL url = invoker.getUrl();
-        String methodName = invocation.getMethodName();
-        int max = invoker.getUrl().getMethodParameter(methodName, Constants.ACTIVES_KEY, 0);
-        RpcStatus count = RpcStatus.getStatus(invoker.getUrl(), invocation.getMethodName());
+        URL       url        = invoker.getUrl();
+        String    methodName = invocation.getMethodName();
+        int       max        = invoker.getUrl().getMethodParameter(methodName, Constants.ACTIVES_KEY, 0);
+        RpcStatus count      = RpcStatus.getStatus(invoker.getUrl(), invocation.getMethodName());
         if (max > 0) {
             long timeout = invoker.getUrl().getMethodParameter(invocation.getMethodName(), Constants.TIMEOUT_KEY, 0);
-            long start = System.currentTimeMillis();
-            long remain = timeout;
-            int active = count.getActive();
+            long start   = System.currentTimeMillis();
+            long remain  = timeout;
+            int  active  = count.getActive();
             if (active >= max) {
                 synchronized (count) {
                     while ((active = count.getActive()) >= max) {
@@ -54,10 +49,10 @@ public class ActiveLimitFilter implements Filter {
                         remain = timeout - elapsed;
                         if (remain <= 0) {
                             throw new RpcException("Waiting concurrent invoke timeout in client-side for service:  "
-                                                   + invoker.getInterface().getName() + ", method: "
-                                                   + invocation.getMethodName() + ", elapsed: " + elapsed
-                                                   + ", timeout: " + timeout + ". concurrent invokes: " + active
-                                                   + ". max concurrent invoke limit: " + max);
+                                    + invoker.getInterface().getName() + ", method: "
+                                    + invocation.getMethodName() + ", elapsed: " + elapsed
+                                    + ", timeout: " + timeout + ". concurrent invokes: " + active
+                                    + ". max concurrent invoke limit: " + max);
                         }
                     }
                 }
@@ -75,10 +70,10 @@ public class ActiveLimitFilter implements Filter {
                 throw t;
             }
         } finally {
-            if(max>0){
+            if (max > 0) {
                 synchronized (count) {
                     count.notify();
-                } 
+                }
             }
         }
     }

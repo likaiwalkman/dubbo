@@ -15,25 +15,24 @@
  */
 package com.alibaba.dubbo.examples.generic;
 
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import com.alibaba.dubbo.examples.generic.api.IUserService;
 import com.alibaba.dubbo.examples.generic.api.IUserService.Params;
 import com.alibaba.dubbo.examples.generic.api.IUserService.User;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * GenericConsumer
- * 
+ *
  * @author chao.liuc
  */
 public class GenericConsumer {
 
     public static void main(String[] args) throws Exception {
-        String config = GenericConsumer.class.getPackage().getName().replace('.', '/') + "/generic-consumer.xml";
+        String                         config  = GenericConsumer.class.getPackage().getName().replace('.', '/') + "/generic-consumer.xml";
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(config);
         context.start();
         IUserService userservice = (IUserService) context.getBean("userservice");
-        User user = userservice.get(new Params("a=b"));
+        User         user        = userservice.get(new Params("a=b"));
         System.out.println(user);
         System.in.read();
     }

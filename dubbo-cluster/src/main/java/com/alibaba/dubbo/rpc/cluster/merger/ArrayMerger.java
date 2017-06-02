@@ -49,13 +49,13 @@ public class ArrayMerger implements Merger<Object[]> {
         Class<?> type = others[0].getClass().getComponentType();
 
         Object result = Array.newInstance(type, totalLen);
-        int index = 0;
+        int    index  = 0;
         for (Object array : others) {
             for (int i = 0; i < Array.getLength(array); i++) {
                 Array.set(result, index++, Array.get(array, i));
             }
         }
-        return (Object[])result;
+        return (Object[]) result;
     }
 
 }

@@ -15,10 +15,6 @@
  */
 package com.alibaba.dubbo.monitor.simple.pages;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import com.alibaba.dubbo.common.Constants;
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.container.page.Menu;
@@ -26,26 +22,30 @@ import com.alibaba.dubbo.container.page.Page;
 import com.alibaba.dubbo.container.page.PageHandler;
 import com.alibaba.dubbo.monitor.simple.RegistryContainer;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 /**
  * ServicesPageHandler
- * 
+ *
  * @author william.liangf
  */
 @Menu(name = "Services", desc = "Show registered services.", order = 2000)
 public class ServicesPageHandler implements PageHandler {
-    
+
     public Page handle(URL url) {
-        Set<String> services = RegistryContainer.getInstance().getServices();
-        List<List<String>> rows = new ArrayList<List<String>>();
-        int providerCount = 0;
-        int consumerCount = 0;
+        Set<String>        services      = RegistryContainer.getInstance().getServices();
+        List<List<String>> rows          = new ArrayList<List<String>>();
+        int                providerCount = 0;
+        int                consumerCount = 0;
         if (services != null && services.size() > 0) {
             for (String service : services) {
-                List<URL> providers = RegistryContainer.getInstance().getProvidersByService(service);
-                int providerSize = providers == null ? 0 : providers.size();
+                List<URL> providers    = RegistryContainer.getInstance().getProvidersByService(service);
+                int       providerSize = providers == null ? 0 : providers.size();
                 providerCount += providerSize;
-                List<URL> consumers = RegistryContainer.getInstance().getConsumersByService(service);
-                int consumerSize = consumers == null ? 0 : consumers.size();
+                List<URL> consumers    = RegistryContainer.getInstance().getConsumersByService(service);
+                int       consumerSize = consumers == null ? 0 : consumers.size();
                 consumerCount += consumerSize;
                 List<String> row = new ArrayList<String>();
                 row.add(service);
@@ -53,7 +53,7 @@ public class ServicesPageHandler implements PageHandler {
                     if (providerSize > 0) {
                         URL provider = providers.iterator().next();
                         row.add(provider.getParameter(Constants.APPLICATION_KEY, ""));
-                        row.add(provider.getParameter("owner", "") + (provider.hasParameter("organization") ?  " (" + provider.getParameter("organization") + ")" : ""));
+                        row.add(provider.getParameter("owner", "") + (provider.hasParameter("organization") ? " (" + provider.getParameter("organization") + ")" : ""));
                     } else {
                         row.add("");
                         row.add("");
@@ -67,7 +67,7 @@ public class ServicesPageHandler implements PageHandler {
             }
         }
         return new Page("Services", "Services (" + rows.size() + ")",
-                new String[] { "Service Name:", "Application", "Owner", "Providers(" + providerCount + ")", "Consumers(" + consumerCount + ")", "Statistics", "Charts" }, rows);
+                new String[]{"Service Name:", "Application", "Owner", "Providers(" + providerCount + ")", "Consumers(" + consumerCount + ")", "Statistics", "Charts"}, rows);
     }
 
 }

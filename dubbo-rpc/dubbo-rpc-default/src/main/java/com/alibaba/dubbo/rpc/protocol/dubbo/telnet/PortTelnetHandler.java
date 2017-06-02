@@ -15,8 +15,6 @@
  */
 package com.alibaba.dubbo.rpc.protocol.dubbo.telnet;
 
-import java.util.Collection;
-
 import com.alibaba.dubbo.common.extension.Activate;
 import com.alibaba.dubbo.common.utils.StringUtils;
 import com.alibaba.dubbo.remoting.Channel;
@@ -26,9 +24,11 @@ import com.alibaba.dubbo.remoting.telnet.TelnetHandler;
 import com.alibaba.dubbo.remoting.telnet.support.Help;
 import com.alibaba.dubbo.rpc.protocol.dubbo.DubboProtocol;
 
+import java.util.Collection;
+
 /**
  * ServerTelnetHandler
- * 
+ *
  * @author william.liangf
  */
 @Activate
@@ -36,16 +36,16 @@ import com.alibaba.dubbo.rpc.protocol.dubbo.DubboProtocol;
 public class PortTelnetHandler implements TelnetHandler {
 
     public String telnet(Channel channel, String message) {
-        StringBuilder buf = new StringBuilder();
-        String port = null;
-        boolean detail = false;
+        StringBuilder buf    = new StringBuilder();
+        String        port   = null;
+        boolean       detail = false;
         if (message.length() > 0) {
             String[] parts = message.split("\\s+");
             for (String part : parts) {
                 if ("-l".equals(part)) {
                     detail = true;
                 } else {
-                    if (! StringUtils.isInteger(part)) {
+                    if (!StringUtils.isInteger(part)) {
                         return "Illegal port " + part + ", must be integer.";
                     }
                     port = part;
@@ -64,7 +64,7 @@ public class PortTelnetHandler implements TelnetHandler {
                 }
             }
         } else {
-            int p = Integer.parseInt(port);
+            int            p      = Integer.parseInt(port);
             ExchangeServer server = null;
             for (ExchangeServer s : DubboProtocol.getDubboProtocol().getServers()) {
                 if (p == s.getUrl().getPort()) {

@@ -15,15 +15,15 @@
  */
 package com.alibaba.dubbo.rpc.cluster.loadbalance;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.common.utils.AtomicPositiveInteger;
 import com.alibaba.dubbo.rpc.Invocation;
 import com.alibaba.dubbo.rpc.Invoker;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Round robin load balance.
@@ -33,17 +33,17 @@ import com.alibaba.dubbo.rpc.Invoker;
  */
 public class RoundRobinLoadBalance extends AbstractLoadBalance {
 
-    public static final String NAME = "roundrobin"; 
-    
+    public static final String NAME = "roundrobin";
+
     private final ConcurrentMap<String, AtomicPositiveInteger> sequences = new ConcurrentHashMap<String, AtomicPositiveInteger>();
 
     private final ConcurrentMap<String, AtomicPositiveInteger> weightSequences = new ConcurrentHashMap<String, AtomicPositiveInteger>();
 
     protected <T> Invoker<T> doSelect(List<Invoker<T>> invokers, URL url, Invocation invocation) {
-        String key = invokers.get(0).getUrl().getServiceKey() + "." + invocation.getMethodName();
-        int length = invokers.size(); // 总个数
-        int maxWeight = 0; // 最大权重
-        int minWeight = Integer.MAX_VALUE; // 最小权重
+        String key       = invokers.get(0).getUrl().getServiceKey() + "." + invocation.getMethodName();
+        int    length    = invokers.size(); // 总个数
+        int    maxWeight = 0; // 最大权重
+        int    minWeight = Integer.MAX_VALUE; // 最小权重
         for (int i = 0; i < length; i++) {
             int weight = getWeight(invokers.get(i), invocation);
             maxWeight = Math.max(maxWeight, weight); // 累计最大权重
@@ -55,7 +55,7 @@ public class RoundRobinLoadBalance extends AbstractLoadBalance {
                 weightSequences.putIfAbsent(key, new AtomicPositiveInteger());
                 weightSequence = weightSequences.get(key);
             }
-            int currentWeight = weightSequence.getAndIncrement() % maxWeight;
+            int              currentWeight  = weightSequence.getAndIncrement() % maxWeight;
             List<Invoker<T>> weightInvokers = new ArrayList<Invoker<T>>();
             for (Invoker<T> invoker : invokers) { // 筛选权重大于当前权重基数的Invoker
                 if (getWeight(invoker, invocation) > currentWeight) {
